@@ -22,6 +22,30 @@ namespace ASM.Controllers
         public IActionResult Index(string email, string password)
         {
 
+            ViewBag.login = "";
+            ViewBag.Role = "";
+            Customer cs = new Customer();
+            cs = _context.Customer.Select(p => p)
+                .Where(p => p.Email == email && p.PassWord == password).FirstOrDefault();
+            if (cs == null)
+            {
+                ViewBag.login = "Not exist Accouct";
+            }
+            else
+            {
+                ViewBag.Role = _context.Customer.Select(p => p)
+                                .Where(p => p.Email == email && p.PassWord == password && p.Role == 1).FirstOrDefault();
+                var Status = _context.Customer.Select(p => p)
+                                .Where(p => p.Email == email && p.PassWord == password && p.Status == true).FirstOrDefault();
+                if (Status == null)
+                {
+                    ViewBag.login = "Accouct pause operation";
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Product");
+                }
+            }
             return View();
         }
         public IActionResult SignUp()
